@@ -93,8 +93,7 @@ zonedrop \
   --record "api:5.6.7.8" \
   --infra "ns1" --infra "ns2" \
   --backup-dir /backups
-
-
+```
 
 ## Exit codes
 
