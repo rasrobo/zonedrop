@@ -7,7 +7,9 @@ name = "zonedrop"
 version = "0.1.0"
 description = "Idempotent DNS zone sync for Namecheap domains and DNS — CLI with safety guards, backups, and verification"
 readme = "README.md"
-license = {text = "MIT"}
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+]
 requires-python = ">=3.11"
 keywords = ["namecheap", "dns", "cli"]
 
@@ -18,7 +20,10 @@ vault = ["cryptography"]
 zonedrop = "zonedrop.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/your-org/zonedrop"
+Homepage = "https://github.com/rasrobo/zonedrop"
 
 [tool.setuptools.packages.find]
 include = ["zonedrop*"]
+
+[tool.setuptools]
+license-files = []
