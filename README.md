@@ -4,7 +4,7 @@
 
 **What's in it for you:** Namecheap's `setHosts` API replaces your entire DNS zone every time — one mistake and your website, email, and infrastructure records vanish. zonedrop protects you with automatic backups, infrastructure record guards, and post-write verification. Declare the records you want and let zonedrop merge them safely.
 
-zonedrop is a CLI tool and Docker image for managing DNS zones registered with
+zonedrop is a CLI tool for managing DNS zones registered with
 [Namecheap](https://www.namecheap.com) using the Namecheap DNS API. It is
 designed for Namecheap customers who:
 - Have their domains registered at Namecheap
@@ -22,6 +22,18 @@ are never accidentally removed.
 - **Backup before write** — every write is preceded by a full zone backup to disk
 - **Post-write verification** — reads back the zone after writing and retries if records are missing
 - **Dry-run mode** — see what would change without touching the zone
+
+## Install
+
+```bash
+pip install zonedrop
+```
+
+Requires Python 3.11+. No other runtime dependencies. For vault support:
+
+```bash
+pip install "zonedrop[vault]"
+```
 
 ## Credentials
 
@@ -82,16 +94,7 @@ zonedrop \
   --infra "ns1" --infra "ns2" \
   --backup-dir /backups
 
-# Docker
-docker run --rm \
-  -v /host/backups:/backups \
-  -e ZONEDROP_API_USER \
-  -e ZONEDROP_API_KEY \
-  -e ZONEDROP_CLIENT_IP \
-  your-registry/zonedrop \
-  --sld example --tld com \
-  --record "www:1.2.3.4"
-```
+
 
 ## Exit codes
 
