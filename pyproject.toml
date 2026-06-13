@@ -11,6 +11,9 @@ license = {text = "MIT"}
 requires-python = ">=3.11"
 keywords = ["namecheap", "dns", "cli"]
 
+[project.optional-dependencies]
+vault = ["cryptography"]
+
 [project.scripts]
 zonedrop = "zonedrop.cli:main"
 

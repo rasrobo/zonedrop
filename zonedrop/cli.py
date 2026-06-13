@@ -1,11 +1,34 @@
 """Command-line interface for zonedrop."""
 
 import argparse
+import os
 import sys
 import textwrap
 
 from zonedrop import __version__
 from zonedrop.sync import sync_zone
+from zonedrop.vault import vault_cmd, _load_vault, VAULT_PATH
+
+
+_ENV_PREFIX = "ZONEDROP_"
+
+
+def _resolve_creds(args: argparse.Namespace) -> tuple[str, str, str]:
+    """Resolve API credentials from CLI args/env, falling back to vault."""
+    api_user = args.api_user
+    api_key = args.api_key
+    client_ip = args.client_ip
+    if not api_user and not api_key and not client_ip:
+        pwd = os.environ.get(_ENV_PREFIX + "VAULT_PASSWORD", "")
+        if pwd and os.path.exists(VAULT_PATH):
+            try:
+                data = _load_vault(VAULT_PATH, pwd)
+                api_user = data.get("ZONEDROP_API_USER", "")
+                api_key = data.get("ZONEDROP_API_KEY", "")
+                client_ip = data.get("ZONEDROP_CLIENT_IP", "")
+            except Exception:
+                pass
+    return api_user, api_key, client_ip
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -31,9 +54,24 @@ def build_parser() -> argparse.ArgumentParser:
 
     # Auth
     auth = parser.add_argument_group("Namecheap API credentials")
-    auth.add_argument("--api-user", required=True, help="Namecheap API username")
-    auth.add_argument("--api-key", required=True, help="Namecheap API key")
-    auth.add_argument("--client-ip", required=True, help="Whitelisted client IP for API access")
+    auth.add_argument(
+        "--api-user",
+        default=os.environ.get(_ENV_PREFIX + "API_USER", ""),
+        required=not bool(os.environ.get(_ENV_PREFIX + "API_USER")),
+        help="Namecheap API username. Env: ZONEDROP_API_USER",
+    )
+    auth.add_argument(
+        "--api-key",
+        default=os.environ.get(_ENV_PREFIX + "API_KEY", ""),
+        required=not bool(os.environ.get(_ENV_PREFIX + "API_KEY")),
+        help="Namecheap API key. Env: ZONEDROP_API_KEY",
+    )
+    auth.add_argument(
+        "--client-ip",
+        default=os.environ.get(_ENV_PREFIX + "CLIENT_IP", ""),
+        required=not bool(os.environ.get(_ENV_PREFIX + "CLIENT_IP")),
+        help="Whitelisted client IP for API access. Env: ZONEDROP_CLIENT_IP",
+    )
 
     # Domain
     domain = parser.add_argument_group("Domain")
@@ -102,6 +140,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Handle `zonedrop vault encrypt|decrypt` before argparse
+    if argv and argv[0] == "vault":
+        return vault_cmd(argv[1:])
+
     parser = build_parser()
     args = parser.parse_args(argv)
 
@@ -118,11 +160,19 @@ def main(argv: list[str] | None = None) -> int:
         })
     infra = set(args.infra)
 
+    api_user, api_key, client_ip = _resolve_creds(args)
+    if not api_user or not api_key or not client_ip:
+        parser.error(
+            "API credentials required. Provide via --api-user/--api-key/--client-ip, "
+            f"environment variables ({_ENV_PREFIX}API_USER, etc.), "
+            f"or {_ENV_PREFIX}VAULT_PASSWORD + ~/.zonedrop.vault"
+        )
+
     try:
         result = sync_zone(
-            api_user=args.api_user,
-            api_key=args.api_key,
-            client_ip=args.client_ip,
+            api_user=api_user,
+            api_key=api_key,
+            client_ip=client_ip,
             sld=args.sld,
             tld=args.tld,
             records=records,

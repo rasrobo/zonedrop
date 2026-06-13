@@ -14,14 +14,59 @@ are never accidentally removed.
 - **Post-write verification** — reads back the zone after writing and retries if records are missing
 - **Dry-run mode** — see what would change without touching the zone
 
+## Credentials
+
+Credentials can be provided in three ways, checked in this order:
+
+### 1. CLI arguments (highest priority)
+
+```bash
+zonedrop --api-user USER --api-key KEY --client-ip IP ...
+```
+
+### 2. Environment variables
+
+```bash
+export ZONEDROP_API_USER=your_user
+export ZONEDROP_API_KEY=your_key
+export ZONEDROP_CLIENT_IP=your_ip
+zonedrop ...
+```
+
+Or copy `.env.example` to `.env` and fill it in:
+
+```bash
+cp .env.example .env
+# edit .env with your credentials
+export $(grep -v '^#' .env | xargs)
+zonedrop ...
+```
+
+### 3. Encrypted vault file (`~/.zonedrop.vault`, lowest priority)
+
+```bash
+# Install cryptography support
+pip install zonedrop[vault]
+
+# Encrypt your credentials from environment variables
+export ZONEDROP_API_USER=your_user
+export ZONEDROP_API_KEY=your_key
+export ZONEDROP_CLIENT_IP=your_ip
+zonedrop vault encrypt
+
+# Use the vault
+export ZONEDROP_VAULT_PASSWORD=your_vault_password
+zonedrop ...
+
+# View stored credentials
+zonedrop vault decrypt
+```
+
 ## Usage
 
 ```bash
 # CLI
 zonedrop \
-  --api-user YOUR_USER \
-  --api-key YOUR_KEY \
-  --client-ip YOUR_IP \
   --sld example --tld com \
   --record "www:1.2.3.4" \
   --record "api:5.6.7.8" \
@@ -31,13 +76,12 @@ zonedrop \
 # Docker
 docker run --rm \
   -v /host/backups:/backups \
+  -e ZONEDROP_API_USER \
+  -e ZONEDROP_API_KEY \
+  -e ZONEDROP_CLIENT_IP \
   your-registry/zonedrop \
-  --api-user YOUR_USER \
-  --api-key YOUR_KEY \
-  --client-ip YOUR_IP \
   --sld example --tld com \
-  --record "www:1.2.3.4" \
-  --backup-dir /backups
+  --record "www:1.2.3.4"
 ```
 
 ## Exit codes
