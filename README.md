@@ -2,6 +2,8 @@
 
 **Idempotent Namecheap DNS zone sync with safety guards — for Namecheap customers who have their domains and DNS managed by Namecheap.**
 
+**What's in it for you:** Namecheap's `setHosts` API replaces your entire DNS zone every time — one mistake and your website, email, and infrastructure records vanish. zonedrop protects you with automatic backups, infrastructure record guards, and post-write verification. Declare the records you want and let zonedrop merge them safely.
+
 zonedrop is a CLI tool and Docker image for managing DNS zones registered with
 [Namecheap](https://www.namecheap.com) using the Namecheap DNS API. It is
 designed for Namecheap customers who:
