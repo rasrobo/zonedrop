@@ -101,3 +101,11 @@ Namecheap's `setHosts` API **replaces the entire zone**. zonedrop protects you b
 4. **Minimum count guard** — rejects writes that would leave fewer than `--min-records` records
 5. **Backup** — writes the pre-existing zone to `--backup-dir` before making changes
 6. **Verification** — reads back the zone after writing and retries up to `--verify-retries` times
+
+---
+
+Built by [Side Quest Studios](https://sidequeststudios.xyz)
+
+If you find this project useful, consider [supporting development on Ko-fi](https://ko-fi.com/sidequeststudios).
+
+*Keywords: Namecheap DNS, DNS zone management, CLI DNS tool, DNS automation, Namecheap API, devops DNS utility*
