@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "zonedrop"
 version = "0.1.0"
-description = "Idempotent Namecheap DNS zone sync with safety guards"
+description = "Idempotent DNS zone sync for Namecheap domains and DNS — CLI with safety guards, backups, and verification"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.11"

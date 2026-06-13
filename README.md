@@ -1,6 +1,13 @@
 # zonedrop
 
-**Idempotent Namecheap DNS zone sync with safety guards.**
+**Idempotent Namecheap DNS zone sync with safety guards — for Namecheap customers who have their domains and DNS managed by Namecheap.**
+
+zonedrop is a CLI tool and Docker image for managing DNS zones registered with
+[Namecheap](https://www.namecheap.com) using the Namecheap DNS API. It is
+designed for Namecheap customers who:
+- Have their domains registered at Namecheap
+- Use Namecheap's DNS hosting (BasicDNS, PremiumDNS, or FreeDNS)
+- Manage DNS records via the Namecheap API
 
 Think of it as a DNS zone "upsert" — declare the records you want, and zonedrop
 merges them into the existing zone while ensuring critical infrastructure records
